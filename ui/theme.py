@@ -13,22 +13,26 @@ def apply_theme():
         --surface: {THEME['surface']};
         --accent: {THEME['accent']};
     }}
-    .stApp {{ background: linear-gradient(135deg, {THEME['background']} 0%, #ffffff 45%, #eef2ff 100%); }}
+    .stApp {{ background: linear-gradient(135deg, {THEME['background']} 0%, #ffffff 55%, #eef2ff 100%); }}
     [data-testid="stSidebar"] {{ background: {THEME['primary']}; }}
-    [data-testid="stSidebar"] * {{ color: white !important; }}
+    /* Sidebar: white for nav/labels/headings only — NOT form fields. */
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] p, [data-testid="stSidebar"] label, [data-testid="stSidebar"] summary,
+    [data-testid="stSidebar"] .stMarkdown, [data-testid="stSidebar"] [data-testid="stCaptionContainer"],
+    [data-testid="stSidebar"] button {{ color: #ffffff !important; }}
+    /* Keep inputs legible: dark text on a white field. */
+    [data-testid="stSidebar"] input, [data-testid="stSidebar"] textarea {{
+        color: {THEME['primary']} !important; background: #ffffff !important;
+    }}
     .hero-card {{
         background: linear-gradient(135deg, {THEME['primary']}, {THEME['secondary']});
-        color: white; padding: 28px; border-radius: 24px; margin-bottom: 18px;
-        box-shadow: 0 20px 45px rgba(13,27,61,.18);
+        color: white; padding: 24px 28px; border-radius: 20px; margin-bottom: 16px;
+        box-shadow: 0 16px 40px rgba(13,27,61,.16);
     }}
     .hero-card h1 {{ color: white; margin: 0; }}
-    .studio-card {{
-        background: rgba(255,255,255,.92); border: 1px solid rgba(37,99,235,.14);
-        border-radius: 20px; padding: 18px; box-shadow: 0 12px 32px rgba(15,23,42,.06);
-    }}
-    .metric-card {{ background:white;border-radius:18px;padding:16px;border:1px solid #dbeafe; }}
-    .warning-box {{background:#fff7ed;border-left:5px solid {THEME['warning']};padding:12px;border-radius:12px;}}
-    .success-box {{background:#f0fdf4;border-left:5px solid {THEME['success']};padding:12px;border-radius:12px;}}
+    .page-header {{ margin: 0 0 6px; }}
+    .page-header h2 {{ color: {THEME['primary']}; margin: 0; font-size: 1.6rem; }}
+    .page-header p {{ color: #475569; margin: 2px 0 0; }}
     div.stButton > button {{ border-radius: 12px; border: 1px solid {THEME['secondary']}; }}
     div.stButton > button[kind="primary"] {{ background:{THEME['secondary']}; color:white; }}
     </style>
@@ -42,3 +46,14 @@ def hero(title: str, subtitle: str):
       <p style='font-size:1.05rem;opacity:.92'>{subtitle}</p>
     </div>
     """, unsafe_allow_html=True)
+
+
+def page_header(title: str, subtitle: str = "", status: str = ""):
+    """Slim contextual header for working pages (keeps the big hero off them)."""
+    chip = ""
+    if status:
+        chip = (f"<span style='background:rgba(37,99,235,.12);color:{THEME['secondary']};"
+                f"font-size:.78rem;font-weight:600;padding:3px 12px;border-radius:999px;"
+                f"margin-left:10px;vertical-align:middle'>{status}</span>")
+    sub = f"<p>{subtitle}</p>" if subtitle else ""
+    st.markdown(f"<div class='page-header'><h2>{title}{chip}</h2>{sub}</div>", unsafe_allow_html=True)

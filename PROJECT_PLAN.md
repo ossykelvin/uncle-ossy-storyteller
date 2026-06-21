@@ -19,7 +19,7 @@ _Last updated: 2026-06-21_
 | Real AI generation | ✅ Done (P1) | OpenRouter + Gemini 2.5-flash both verified end-to-end |
 | Auth | ✅ Hardened (P2) | PBKDF2 + per-user salt, policy, forced default-pw change, ownership guards |
 | Tests | 🟡 Started (P2) | `tests/test_auth.py` — 5 passing; more coverage in P3 |
-| Deployment | ❌ None | Runs on localhost only |
+| Deployment | 🟡 Repo live (P4) | Pushed to github.com/ossykelvin/uncle-ossy-storyteller; pinned deps + secrets template ready. Final step: connect Streamlit Cloud (see DEPLOY.md) |
 | Persistent backend | ✅ Live (P5a) | Supabase Auth + Postgres active; `StoryTeller` schema applied; RLS isolation verified live |
 | `.gitignore` | ✅ Done | `.env.local`/`data/`/`.venv` excluded |
 

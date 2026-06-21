@@ -41,6 +41,33 @@ app, and confirm the project is still there.
 
 ---
 
+## Email on signup
+
+Two independent layers send mail on a new signup:
+
+**1. Supabase verification email (the confirmation link) — REQUIRED for "verify on".**
+With email verification ON, Supabase will not deliver the confirmation link until you
+point it at a real SMTP provider. Configure Brevo SMTP:
+
+Supabase → **Authentication → Emails → SMTP Settings** → enable custom SMTP:
+- **Host:** `smtp-relay.brevo.com`   **Port:** `587`
+- **Username:** your Brevo **SMTP login** (Brevo → **SMTP & API → SMTP** tab — looks like `8xxxxx@smtp-brevo.com`)
+- **Password:** a Brevo **SMTP key** (generate under the same SMTP tab)
+  - ⚠️ This is **not** the `xkeysib-...` API key — that one is for the transactional API
+    (used by the app-side emails below). SMTP needs its own key.
+- **Sender email:** `noreply@koptechnology.com`   **Sender name:** `Ossy Story Teller`
+
+Then Supabase → **Authentication → URL Configuration** → set **Site URL** to your app URL
+(`http://localhost:8443` for local, the `*.streamlit.app` URL once deployed) so the
+confirmation link points back correctly.
+
+**2. App-side Brevo emails (welcome + admin alert) — already wired.**
+On each signup the app sends a welcome email to the new user and a "new signup" alert to
+`BREVO_ADMIN_EMAIL`, via `core/email_brevo.py` using the `BREVO_API_KEY`. Best-effort: a
+mail failure never blocks signup. Tested live and delivering.
+
+---
+
 ### What changes when Supabase is active
 | | Local (blank creds) | Supabase (creds set) |
 |---|---|---|

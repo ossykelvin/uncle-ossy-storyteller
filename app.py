@@ -161,10 +161,9 @@ with st.sidebar:
                         ok, msg = change_password(st.session_state.username, cur_pw, new_pw)
                         st.success(msg) if ok else st.error(msg)
 
-hero(APP_NAME, "Plan, write, rewrite, approve, remember, and export your stories from one beautiful dashboard.")
-
 page = st.session_state.page
 if page == "Dashboard":
+    hero(APP_NAME, "Plan, write, rewrite, approve, remember, and export your stories from one beautiful dashboard.")
     render_dashboard(st.session_state.username)
 elif page == "New Project":
     render_new_project(st.session_state.username)

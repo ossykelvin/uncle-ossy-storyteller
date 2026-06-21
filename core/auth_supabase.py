@@ -29,6 +29,12 @@ def sign_up(email: str, password: str) -> tuple[bool, str, dict | None]:
         resp = anon_client().auth.sign_up({"email": email, "password": password})
     except Exception as exc:
         return False, f"Sign-up failed: {exc}", None
+    # Best-effort app-side emails (welcome + admin alert). Never blocks signup.
+    try:
+        from core.email_brevo import notify_signup
+        notify_signup(email)
+    except Exception:
+        pass
     session = _session_dict(resp)
     if session:
         return True, "Account created.", session

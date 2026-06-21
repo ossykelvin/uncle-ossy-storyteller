@@ -29,7 +29,7 @@ def render_writing_studio(provider: str):
     status = provider_status()
     if not status.get(f"{provider}_has_key", False):
         st.warning(f"{provider.title()} is selected but its API key is not configured. Add it in .env.local or Streamlit secrets, or choose another provider in Settings.")
-    tabs = st.tabs(["Outline", "Current Chapter", "Review & Approval", "Continuity", "Story QA", "Project JSON"])
+    tabs = st.tabs(["Outline", "Current Chapter", "Review & Approval", "Continuity", "Story QA"])
 
     with tabs[0]:
         st.subheader("Outline")
@@ -43,7 +43,8 @@ def render_writing_studio(provider: str):
                     outline_text = generate_outline(project, provider)
                 except Exception as exc:
                     st.error("Outline generation failed, but the app did not crash. Check provider API key/model settings or enable offline fallback.")
-                    st.code(str(exc))
+                    with st.expander("Technical details"):
+                        st.code(str(exc))
                     return
                 bundle["outline"] = {"content": outline_text, "approved": False, "created_at": now_iso()}
                 project["status"] = "outline"
@@ -72,7 +73,8 @@ def render_writing_studio(provider: str):
                     content = write_chapter(project, bundle["outline"].get("content", ""), bundle["story_bible"], bundle["chapters"], n, chapter_instruction, provider)
                 except Exception as exc:
                     st.error("Chapter generation failed, but the app did not crash. Check provider API key/model settings or enable offline fallback.")
-                    st.code(str(exc))
+                    with st.expander("Technical details"):
+                        st.code(str(exc))
                     return
                 warnings = ""
                 try:
@@ -107,7 +109,8 @@ def render_writing_studio(provider: str):
                             draft["content"] = rewrite_chapter(project, draft.get("content", ""), tone, provider)
                         except Exception as exc:
                             st.error("Rewrite failed, but the app did not crash. Check provider API key/model settings or enable offline fallback.")
-                            st.code(str(exc))
+                            with st.expander("Technical details"):
+                                st.code(str(exc))
                             return
                         draft["title"] = _chapter_title(draft["content"], draft["chapter_number"])
                         save_project(project_id, bundle)
@@ -138,7 +141,8 @@ def render_writing_studio(provider: str):
                             bundle["story_bible"] = safe_json_loads(update_json, bundle["story_bible"])
                         except Exception as exc:
                             st.error("Approval memory update failed, but the app did not crash. The chapter was left as draft.")
-                            st.code(str(exc))
+                            with st.expander("Technical details"):
+                                st.code(str(exc))
                             c["status"] = "draft"
                             c["approved_at"] = ""
                             return
@@ -169,7 +173,8 @@ def render_writing_studio(provider: str):
                     report = qa_project(project, bundle["outline"].get("content", ""), bundle["story_bible"], bundle["chapters"], provider)
                 except Exception as exc:
                     st.error("Story QA failed, but the app did not crash. Check provider API key/model settings or enable offline fallback.")
-                    st.code(str(exc))
+                    with st.expander("Technical details"):
+                        st.code(str(exc))
                     return
                 bundle["qa_reports"].append({"created_at": now_iso(), "report": report})
                 save_project(project_id, bundle)
@@ -180,5 +185,5 @@ def render_writing_studio(provider: str):
             with st.expander(f"QA Report {r.get('created_at')}"):
                 st.markdown(r.get("report", ""))
 
-    with tabs[5]:
+    with st.expander("Advanced · Project data (debug)"):
         st.json(bundle)

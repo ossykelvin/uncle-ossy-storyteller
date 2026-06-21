@@ -64,6 +64,17 @@ SUPABASE_SCHEMA = env("SUPABASE_SCHEMA", "StoryTeller")
 def supabase_enabled() -> bool:
     return bool(SUPABASE_URL and SUPABASE_ANON_KEY)
 
+# ── Brevo transactional email (optional) ───────────────────────────────
+BREVO_API_KEY = env("BREVO_API_KEY", "")
+BREVO_SENDER_EMAIL = env("BREVO_SENDER_EMAIL", "")
+BREVO_SENDER_NAME = env("BREVO_SENDER_NAME", APP_NAME)
+# Where new-signup admin alerts are sent (defaults to the sender address).
+SIGNUP_ALERT_EMAIL = env("BREVO_ADMIN_EMAIL", "") or BREVO_SENDER_EMAIL
+
+
+def brevo_enabled() -> bool:
+    return bool(BREVO_API_KEY and BREVO_SENDER_EMAIL)
+
 LOCAL_STORAGE_PATH = Path(env("LOCAL_STORAGE_PATH", "./data"))
 EXPORT_STORAGE_PATH = Path(env("EXPORT_STORAGE_PATH", "./data/exports"))
 CUSTOM_STYLE_PATH = Path(env("CUSTOM_STYLE_PATH", "./data/custom_styles"))

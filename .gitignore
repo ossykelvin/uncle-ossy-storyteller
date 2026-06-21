@@ -22,3 +22,6 @@ __pycache__/
 Thumbs.db
 .idea/
 .vscode/
+
+# Editor atomic-write temp files
+*.tmp.*
